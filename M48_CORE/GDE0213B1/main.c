@@ -1,0 +1,172 @@
+#include "main.h"
+#include "Display_EPD_W21.h"
+
+void PortInit(void)
+{
+    DDRB = 0B00000000;
+    PORTB= 0B00000000;
+    PINB = 0x00;
+
+    DDRD = 0B01111100;		// PD5->RES	PD6->D/C PD7->BUSY PD4->SDI PD3->CS PD2->CLK
+    PORTD= 0B00000000;
+    PIND = 0x00;
+
+    DDRC = 0B00111100;
+    PORTC= 0B00000000;
+    PINC = 0x00;
+}
+
+void UartInit(void)
+{
+    UBRR0H = (F_CPU / BAUD / 16 - 1) / 256;
+    UBRR0L = (F_CPU / BAUD / 16 - 1) % 256;
+    UCSR0B = 1<<RXEN0 | 1<<TXEN0 | 1<<RXCIE0;
+    UCSR0C = 1<<UCSZ00 | 1<<UCSZ01;
+}
+void SendStr(unsigned char* data,unsigned char len)
+{
+    unsigned char i;
+    for(i=0; i<len; i++)
+    {
+        while(!(UCSR0A & (1 << UDRE0)));
+        UDR0 = *(data++);
+    }
+} 
+const prog_uchar a[288]= 
+{
+	0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+	0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+	0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+	0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+	0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XF8,0X07,0XFF,0XFF,0XFF,0XFF,0X80,
+	0X00,0XFF,0XFF,0XFF,0XFE,0X00,0X00,0X3F,0XFF,0XFF,0XFC,0X00,0X00,0X1F,0XFF,0XF3,
+	0XF8,0X00,0X00,0X0F,0XFF,0XE3,0XF0,0X00,0X00,0X07,0XFF,0XC3,0XE0,0X00,0X00,0X07,
+	0XFF,0XC3,0XE0,0X00,0X00,0X03,0XFF,0X83,0XE0,0X7F,0XFE,0X03,0XFF,0X07,0XC3,0XFF,
+	0XFF,0X83,0XFC,0X07,0XC3,0XFF,0XFF,0XC3,0XF8,0X0F,0XC3,0XFF,0XFF,0XC3,0XE0,0X0F,
+	0XC3,0XFF,0XFF,0X87,0X80,0X1F,0XC0,0XFF,0XFF,0X00,0X00,0X3F,0XE0,0X0F,0XFC,0X00,
+	0X00,0X7F,0XE0,0X00,0X00,0X00,0X00,0XFF,0XF0,0X00,0X00,0X00,0X01,0XFF,0XF0,0X00,
+	0X00,0X00,0X03,0XFF,0XF8,0X00,0X00,0X00,0X0F,0XFF,0XFE,0X00,0X00,0X00,0X3F,0XFF,
+	0XFF,0X80,0X00,0X00,0XFF,0XFF,0XFF,0XF0,0X00,0X07,0XFF,0XFF,0XFF,0XFF,0XC3,0XFF,
+	0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+	0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+	0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+	0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+	0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+};
+
+const prog_uchar b[288] = 
+{
+	0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+	0XFF,0XFF,0XFF,0XFF,0X87,0XFF,0XFF,0XFF,0XFF,0XFC,0X01,0XFF,0XFF,0XFF,0XFF,0XF8,
+	0X00,0XFF,0XFF,0XFF,0XFF,0XF8,0X00,0XFF,0XFF,0XFF,0XFF,0XFB,0XFC,0XFF,0XFF,0XFF,
+	0XFF,0XF3,0XFE,0XFF,0XFF,0XFF,0XFF,0XF1,0XFE,0XFF,0XFF,0XFF,0XFF,0XF8,0X7C,0XFF,
+	0XFF,0XFF,0XFF,0XF8,0X00,0XFF,0XFF,0XFF,0XFF,0XFC,0X01,0XFF,0XFF,0XFF,0XFF,0XFF,
+	0X07,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+	0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XCF,0XFF,0XFF,0XFF,0XFF,0XF8,0X00,
+	0X3F,0XFF,0XFF,0XFF,0XC0,0X00,0X0F,0XFF,0XFF,0XFF,0X00,0X00,0X07,0XFF,0XFF,0XFE,
+	0X00,0X00,0X03,0XFF,0XFF,0XFC,0X00,0X00,0X01,0XFF,0XFF,0XF8,0X00,0X00,0X00,0XFF,
+	0XFF,0XF0,0X00,0X00,0X00,0XFF,0XFF,0XF0,0X00,0X00,0X00,0X7F,0XFF,0XE0,0X1F,0XFC,
+	0X00,0X7F,0XFF,0XE0,0XFF,0XFF,0X80,0X7F,0XFF,0XE1,0XFF,0XFF,0XE0,0X7F,0XFF,0XC3,
+	0XFF,0XFF,0XF0,0X7F,0XFF,0XC1,0XFF,0XFF,0XF8,0X7F,0XFF,0XC0,0XFF,0XFF,0XF8,0X7F,
+	0XFF,0XC0,0X7F,0XFF,0XF8,0X7F,0XFF,0XC0,0X3F,0XFF,0XF8,0X7F,0XFF,0XC0,0X1F,0XFF,
+	0XF0,0XFF,0XFF,0XC0,0X0F,0XFF,0XE0,0XFF,0XFF,0XE0,0X0F,0XFF,0XC1,0XFF,0XFF,0XE0,
+	0X0F,0XFF,0X81,0XFF,0XFF,0XF0,0X0F,0XFF,0X03,0XFF,0XFF,0XF8,0X0F,0XFF,0X0F,0XFF,
+	0XFF,0XFC,0X1F,0XFF,0X9F,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+	0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+	0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+};
+
+unsigned char num[288] = {0};
+#define DELAYTIME 2000
+#define xDot 128
+#define yDot 250
+
+int main(void)
+{
+ 	unsigned int i,m;
+ 	PortInit();
+//	EPD_init_Full();
+	_delay_ms(200);
+	m = 0xFF;
+	//EPD_Dis_Full((unsigned char *)&m,0x00);  //all white
+//	_delay_ms(4000);
+	
+/*
+	EPD_Dis_Full((unsigned char *)first,1);  //	pic
+	_delay_ms(DELAYTIME);
+ 	EPD_Dis_Full((unsigned char *)second,1);  //	pic
+	_delay_ms(DELAYTIME);
+	EPD_Dis_Full((unsigned char *)third,1);  //	pic
+	_delay_ms(DELAYTIME);
+	EPD_Dis_Full((unsigned char *)logo,1);
+	_delay_ms(DELAYTIME);
+
+    EPD_init_Part();
+	_delay_ms(200);
+    EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)logo,1);
+	*/
+	EPD_init_Part();
+	_delay_ms(300);
+	while(1)
+	{
+		EPD_init_Part();
+		_delay_ms(300);
+		for(i=0; i<288; i++)
+			num[i] = pgm_read_byte(a+i);
+		EPD_Dis_Part(40,87,120,167,num,1);
+		
+
+		for(i=0; i<288; i++)
+			num[i] = pgm_read_byte(b+i);
+		EPD_Dis_Part(40,87,40,87,num,1);
+		
+	}
+/*
+	EPD_init_Full();
+	_delay_ms(200);
+	
+	m = 0xFF;
+	EPD_Dis_Full((unsigned char *)&m,0x00);  //all white
+	_delay_ms(1000);
+	
+	EPD_init_Part();
+	_delay_ms(200);
+*/
+//	PORTC|=0x02;
+	while(1)
+	{
+		PORTC^=0x08;
+		_delay_ms(3000);
+	}
+/*
+  	while(1)
+  	{		
+	    EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)first,1); //pic
+	  	driver_delay_xms(1000);	
+
+	    EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)second,1); //pic
+	  	driver_delay_xms(1000);
+			
+	    EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)third,1); //pic
+	  	driver_delay_xms(900);
+			
+	    EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)fourth,1); //pic
+	  	driver_delay_xms(900);	
+
+	    EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)fifth,1); //pic
+	  	driver_delay_xms(800);
+			
+	    EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)sixth,1); //pic
+	  	driver_delay_xms(800);	
+
+	    EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)senventh,1); //pic
+	  	driver_delay_xms(700);
+			
+	    EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)eighth,1); //pic
+	  	driver_delay_xms(700);
+			
+	    EPD_Dis_Part(0,xDot-1,0,yDot-1,(unsigned char *)ninth,1); //pic
+	  	driver_delay_xms(600);	
+  	}
+  	*/
+}
