@@ -51,9 +51,6 @@ ClassGenCCAutoEnabled=1
 ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 
-[GeneratedDocument1]
-DocumentPath=..\..\..\▄ек©\GIS\PCB\AUTO\NOGPS\gateway.PcbDoc.htm
-
 [SearchPath1]
 Path=E:\360тфел\Lovenix\PcbLib\Project Outputs for Tank\TANK\*.*
 IncludeSubFolders=1
@@ -145,7 +142,7 @@ OutputDefault3=0
 [OutputGroup3]
 Name=Documentation Outputs
 Description=
-TargetPrinter=PDF-XChange 5.0 for ABBYY
+TargetPrinter=Microsoft XPS Document Writer
 PrinterOptions=Record=PrinterOptions|Copies=1|Duplex=1|TrueTypeOptions=3|Collate=1|PrintWhat=1
 OutputType1=Composite
 OutputName1=Composite Drawing
