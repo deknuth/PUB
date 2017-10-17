@@ -51,6 +51,9 @@ ClassGenCCAutoEnabled=1
 ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 
+[GeneratedDocument1]
+DocumentPath=Tank.PcbLib.htm
+
 [SearchPath1]
 Path=E:\360тфел\Lovenix\PcbLib\Project Outputs for Tank\TANK\*.*
 IncludeSubFolders=1
